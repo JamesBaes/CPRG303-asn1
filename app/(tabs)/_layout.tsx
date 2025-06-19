@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 import { Tabs } from 'expo-router'
-import {Ionicons, AntDesign} from '@expo/vector-icons';
+import {Ionicons, AntDesign, FontAwesome} from '@expo/vector-icons';
 
 import React from 'react'
 
@@ -17,25 +17,17 @@ const Layout = () => {
     name="index"
     options={{
         title: "Home",
-        tabBarIcon: ({color, size}) => (<AntDesign name="home" size={24} color="black"/>)
+        tabBarIcon: ({color, size}) => (<AntDesign name="home" size={24} color="grey"/>)
     }}
     />
     <Tabs.Screen
     name="searchPage"
     options={{
         title: "Search",
-        tabBarIcon: ({color, size}) => (<Ionicons name="information-circle" size={24} color="black" />)
-    }}
-    />
-    <Tabs.Screen
-    name="contact"
-    options={{
-        title: "Contact",
-        tabBarIcon: ({color, size}) => (<AntDesign name="contacts" size={24} color="black"/>)
+        tabBarIcon: ({color, size}) => (<FontAwesome name="search" size={24} color="grey" />)
     }}
     />
     </Tabs>
-    
 )
 }
 

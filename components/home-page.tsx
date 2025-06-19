@@ -1,5 +1,4 @@
-import { View, Text, StyleSheet, Platform, Image, StatusBar, ScrollView } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { View, Text, StyleSheet, Platform, Image, StatusBar, ScrollView, TouchableOpacity, Alert, SafeAreaView } from 'react-native'
 import { LinearGradient } from "expo-linear-gradient"
 import React from 'react'
 
@@ -31,17 +30,17 @@ const movies = [
 // Theatres
 const theatres = [
     {
-        theatre: "Cineplex VIP Cinemas University District (age restricted 18+)",
+        location: "Cineplex VIP Cinemas University District (age restricted 18+)",
         address: "250 3953 University Ave NW • Calgary, AB",
         distance: 17
     },
     {
-        theatre: "Cineplex Cinemas East Hills",
+        location: "Cineplex Cinemas East Hills",
         address: "205 East Hills Boulevard SE • Calgary, AB",
         distance: 19
     },
     {
-        theatre: "Scotiabank Theatre Chinook",
+        location: "Scotiabank Theatre Chinook",
         address: "6455 Macleod Trail SW • Calgary, AB",
         distance: 23
     }
@@ -55,43 +54,92 @@ const HomePage = () => {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
         >   
-            <StatusBar barStyle="dark-content" backgroundColor="#FFF1B8"/>
-            <SafeAreaView style={{flex: 1}} edges={['top', 'left', 'right']}>
+            <SafeAreaView style={{flex: 1}}>
                 {/* Header Section */}
                 <View style={styles.header}>
-                    <Image source={require("../assets/images/arrowIcon.png")} style={styles.arrowIcon} />
+                    <View style={styles.headerLocationSection}>
+                        <Image source={require("../assets/images/arrowIcon.png")} style={styles.arrowIcon} />
+                        <Text style={styles.headerText}>Calgary, AB</Text>
+                    </View>
+                    <View style={styles.headerAddSceneSection}>
+                        <View style={styles.addSceneSection}>
+                            <Text style={styles.addSceneText}>
+                                Add Scene+
+                            </Text>
+                        </View>
+                        <View style={{backgroundColor: "blue", width: 40, marginLeft: -10, borderRadius: 40, height: 40, alignItems: "center", justifyContent: "center"}}>
+                            <Text style={{color: "white", fontWeight: "bold"}}>JB</Text>
+                        </View>
+                    </View>
                 </View>
         
                 {/* Movie Posters Section */}
-                <Text style={styles.SectionHeaderText}>Now Playing</Text>
+                <Text style={   styles.movieSectionHeaderText}>Now Playing</Text>
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
                     style={styles.movieSection}
+                    contentContainerStyle={{ alignItems: "flex-start"}}
                 >
-                    {movies.map((movie) => (
-                    <View key={movie.id} style={styles.movieCard}>
-                        <Image source={{ uri: movie.poster }} style={styles.moviePoster} resizeMode="contain" />
-                        <Text style={styles.movieSectionText}>
-                            {movie.title}
-                        </Text>
+                    {movies.map((movie, index) => (
+                    <View 
+                        key={movie.id} 
+                        style={[
+                            styles.movieCard,
+                            index !== 0 && { marginLeft: -200, boxShadow: 'blur', width: styles.movieCard.width - 15, marginTop: 11 }, // this part is for rendering the movie posters to overlap and shrinking the width
+                            { zIndex: movies.length - index } // this ensures that the first card remains on top and the last card at the bottom.
+                        ]}
+                    >
+                        <Image source={{ uri: movie.poster }} style={styles.moviePoster} resizeMode="cover" />
+                        {index === 0 && (         
+                            <Text style={styles.movieSectionText}>
+                                {movie.title}
+                            </Text> 
+                            )
+                        }
                     </View>
                     ))}
                 </ScrollView>
-            
+                    
 
+                {/* Horizontal line to seperate between sections */}
+                <View style={styles.hr} />
 
-
-                <LinearGradient colors={["#000", "#0C1B3A", '#000']} style={styles.theatreSection}>
+                <LinearGradient colors={["#000", "#0C1B3A", "#0C1B3A", "#0C1B3A", '#000']} style={styles.theatreSection}>
                     {/* Find Theatre Section */}        
-                    <View>
-                        <Text style={styles.SectionHeaderText}>Find Your Theatre</Text>
-                    </View>
+                    <Text style={styles.theatreSectionHeaderText}>Find Your Theatre</Text>
+                    <ScrollView
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                    >
+                        {theatres.map((theatre) => (
+                            <View style={styles.theatreCard}>
+                                <View style={styles.theatreCardDistanceSection}>
+                                    <Text style={styles.theatreCardDistanceText}>
+                                        {theatre.distance}
+                                    </Text>
+                                    <Text style={{fontSize: 15, color: "gray"}}>KM</Text>
+                                </View> 
+                                <View style={styles.theatreCardLocationAndAddressSection}>
+                                    <Text style={styles.theatreCardLocationText} numberOfLines={1}>
+                                        {theatre.location}
+                                    </Text>
+                                    <Text style={styles.theatreCardAddressText} numberOfLines={1}>
+                                        {theatre.address}
+                                    </Text>
+                                </View>
+                            </View>
+                        
+                        ))}
+                    </ScrollView>
+                
                 </LinearGradient>
                 
-                {/* Navigation Bar Section */}
+                {/* Alert Button */}
                 <View>
-                    
+                    <TouchableOpacity style={styles.button}>
+                        <Text style = {styles.buttonText} onPress={() => alert("Alert Button Pressed")}>Alert</Text>
+                    </TouchableOpacity>
                 </View>
             </SafeAreaView>
         </LinearGradient>
@@ -105,21 +153,53 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0, // Adjust for Android status bar
         backgroundColor: "black",
-        width: '100%'
+        width: '100%',
+        
     },
     header: {
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
         backgroundColor: "rgba(0,0,0,0.75)",
         width: '100%',
-        height: 50,  
+        height: 50,
         borderBottomLeftRadius: 25,
         borderBottomRightRadius: 25
     },
 
     headerText: {
-        color: 'white'     
+        fontWeight: "bold",
+        color: 'white',     
+        fontSize: 12,
+        marginLeft: 5
+    },
+
+    headerLocationSection: {
+        flex: 1,
+        flexDirection: "row"
+    },
+
+    headerAddSceneSection: {
+        flex: 0.72,
+        flexDirection: "row",
+        alignItems: 'center'
+    },
+
+    addSceneSection: {
+        width: 120,
+        height: 35,
+        backgroundColor: "rgba(0,0,0,0.55)",
+        borderRadius: 17,
+        justifyContent: "center",
+        paddingLeft: 15
+    },
+
+    addSceneText: {
+        color: "white"
     },
 
     arrowIcon: {
+        marginLeft: 20,
         width: 20,
         height: 20
     },
@@ -127,12 +207,21 @@ const styles = StyleSheet.create({
     movieSection: {
     },
 
-    SectionHeaderText: {
+    movieSectionHeaderText: {
         color: "white",
         fontSize: 20,
-        marginTop: 5,
+        marginTop: 20,
         marginBottom: 20,   
-        marginLeft: 20
+        marginLeft: 20,
+        fontWeight: "semibold" 
+    },
+    
+    theatreSectionHeaderText: {
+        color: "white",
+        fontSize: 20,
+        marginBottom: 20,   
+        marginLeft: 20, 
+        fontWeight: "semibold"
     },
 
     linearGradientStyling: {
@@ -142,26 +231,90 @@ const styles = StyleSheet.create({
 
     movieSectionText: {
         color: "white",
-        textAlign: "center"
+        textAlign: "center",
+        paddingTop: 30,
+        fontSize: 15,
+        fontWeight: "semibold"
     },
 
     movieCard: {
-        width: "90%",
-        alignItems: "center",
+        paddingLeft: 20,
+        width: 250,
+        alignItems: "flex-start",
     },
 
     moviePoster: {
-        width: "70%",
-        aspectRatio: 3/4,
+        width: "100%",
+        aspectRatio: 2/3,
         marginBottom: 8,
     },
     
     theatreSection: {
-        flex: 1
+        flex: 5
     },
 
     theatreCard: {
+        display: 'flex',
+        flexDirection: "row",
+        alignItems: 'center',
+        width: 300,
+        height: 90,
+        borderRadius: 15,
+        borderWidth: 0.5,
+        borderColor: "rgba(0,0,200,0.3)",
+        backgroundColor: "rgba(0,0,0,0.6)",
+        marginLeft: 20
+    },
+
+    theatreCardDistanceSection: {
+        flex: 0.25,
+        alignItems: "center"
+    },
+
+    theatreCardDistanceText: {
+        fontSize: 20,
+        color: "white",
+    },
+
+    theatreCardLocationAndAddressSection: {
         flex: 1
+    },
+
+    theatreCardLocationText: {
+        color: 'white',
+        justifyContent: "center",
+        fontSize: 16,
+        fontWeight: "semibold",
+    },
+
+    theatreCardAddressText: {
+        color: 'rgb(167, 167, 184)',
+        justifyContent: "center",
+        fontSize: 12,
+        fontWeight: "semibold",
+        marginTop: 7
+    },
+
+    hr: {
+        borderColor: "blue",
+        opacity: 0.2,
+        borderWidth: 1,
+        marginBottom: 20,
+
+    },
+
+    button: {
+        backgroundColor: "red",
+        width: 50,
+        height: 30,
+        marginLeft: 170,
+        marginBottom: 10,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+
+    buttonText: {
+        color: "white"
     }
 
 })
